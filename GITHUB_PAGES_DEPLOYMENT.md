@@ -39,7 +39,9 @@ Esta guía te llevará paso a paso para desplegar VotAlloween con:
 ⚠️ **Si ves error de "Failed to create build plan"**, es normal. Continúa:
 
 3. Ve al servicio → **Settings**
-4. En **"Root Directory"**, ingresa: **`backend`**
+4. En **"Root Directory"**, ingresa: **`backend`** (SIN `/` al inicio)
+   - ✅ Correcto: `backend`
+   - ❌ Incorrecto: `/backend`
 5. Guarda los cambios
 6. Ve a **Deployments** → Click **"Redeploy"**
 
