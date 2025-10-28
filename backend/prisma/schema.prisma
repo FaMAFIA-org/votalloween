@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Config {
+  id              Int       @id @default(autoincrement())
+  phase           String    @default("upload") // "upload" or "voting"
+  votingStartTime DateTime?
+  votingEndTime   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Costume {
+  id              String   @id @default(uuid())
+  participantName String
+  costumeName     String?
+  imageUrl        String
+  deviceId        String
+  votes           Int      @default(0)
+  uploadedAt      DateTime @default(now())
+  Vote            Vote[]
+
+  @@index([deviceId])
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  deviceId  String   @unique
+  costumeId String
+  costume   Costume  @relation(fields: [costumeId], references: [id])
+  votedAt   DateTime @default(now())
+
+  @@index([deviceId])
+  @@index([costumeId])
+}
