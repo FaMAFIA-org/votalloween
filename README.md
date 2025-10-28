@@ -108,34 +108,46 @@ curl -X PUT http://localhost:3000/api/config \
   }'
 ```
 
-## Deployment en Railway
+## Deployment en Railway con Auto-Deploy
 
-### 1. Crear Proyecto en Railway
+Este proyecto está configurado para **auto-deploy automático** desde GitHub a Railway.
 
-1. Ir a [Railway](https://railway.app/)
-2. Conectar con GitHub
-3. Seleccionar el repositorio `FaMAFIA-org/votalloween`
+### 🚀 Guía Completa de Deployment
 
-### 2. Agregar Base de Datos PostgreSQL
+Ver **[RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)** para instrucciones detalladas paso a paso.
 
-1. En Railway, click "New"
-2. Seleccionar "Database" → "PostgreSQL"
-3. Railway creará automáticamente la variable `DATABASE_URL`
+### Resumen Rápido
 
-### 3. Configurar Backend Service
+1. **Conectar repositorio a Railway**
+   - Railway detectará cambios automáticamente en GitHub
+   - Cada push desplegará automáticamente
 
-1. Crear nuevo servicio desde el repositorio
-2. Configurar variables de entorno:
-   - `DATABASE_URL` (automática desde PostgreSQL)
-   - `PORT` (automática)
-3. Railway detectará el `backend/package.json`
+2. **Crear 3 servicios en Railway:**
+   - PostgreSQL Database
+   - Backend Service (root directory: `backend/`)
+   - Frontend Service (root directory: `frontend/`)
 
-### 4. Configurar Frontend Service
+3. **Configurar variables de entorno:**
+   - Backend: `DATABASE_URL` (automática)
+   - Frontend: `VITE_API_URL` (URL del backend)
 
-1. Crear segundo servicio desde el repositorio
-2. Configurar variables de entorno:
-   - `VITE_API_URL` = URL del backend service
-3. Railway detectará el `frontend/package.json`
+4. **¡Listo!** Railway desplegará automáticamente con cada push a `main`
+
+### Auto-Deploy
+
+Cada vez que hagas `git push origin main`, Railway:
+1. Detecta los cambios automáticamente
+2. Re-construye los servicios afectados
+3. Despliega las nuevas versiones
+
+```bash
+# Hacer cambios y commitear
+git add .
+git commit -m "Update feature"
+git push origin main
+
+# Railway desplegará automáticamente
+```
 
 ## API Endpoints
 
