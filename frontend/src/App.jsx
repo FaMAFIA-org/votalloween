@@ -1,35 +1,101 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import { getConfig } from './services/api';
+import { getDeviceId } from './services/deviceId';
+import UploadPhase from './components/UploadPhase/UploadPhase';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [config, setConfig] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [deviceId] = useState(() => getDeviceId());
+
+  // Obtener configuración al cargar
+  useEffect(() => {
+    loadConfig();
+    // Recargar cada 30 segundos para detectar cambios de fase
+    const interval = setInterval(loadConfig, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  async function loadConfig() {
+    try {
+      const data = await getConfig();
+      setConfig(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error loading config:', err);
+      setError('Error al conectar con el servidor');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="app-container">
+        <div className="loading-screen">
+          <div className="spinner"></div>
+          <p>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app-container">
+        <div className="error-screen">
+          <h2>⚠️ Error</h2>
+          <p>{error}</p>
+          <button onClick={loadConfig} className="btn-primary">
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Determinar qué mostrar según la fase
+  const { phase, votingEndTime } = config;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app-container">
+      <header className="app-header">
+        <img src="/logo.png" alt="VotAlloween" className="app-logo" />
+        <p className="subtitle">Concurso de Disfraces</p>
+      </header>
+
+      <main className="app-main">
+        {phase === 'upload' && (
+          <UploadPhase deviceId={deviceId} />
+        )}
+
+        {phase === 'voting' && (
+          <VotingPhase
+            deviceId={deviceId}
+            votingEndTime={votingEndTime}
+          />
+        )}
+      </main>
+
+      <footer className="app-footer">
+        <small>ID: {deviceId.slice(-8)}</small>
+      </footer>
+    </div>
+  );
 }
 
-export default App
+// Placeholder - Voting Phase (lo crearemos después)
+function VotingPhase({ deviceId, votingEndTime }) {
+  return (
+    <div className="phase-container">
+      <h2>🗳️ Fase de Votación</h2>
+      <p>Componente en construcción...</p>
+      <p>Device ID: {deviceId}</p>
+      <p>Termina: {votingEndTime ? new Date(votingEndTime).toLocaleString('es-ES') : 'No definido'}</p>
+    </div>
+  );
+}
+
+export default App;

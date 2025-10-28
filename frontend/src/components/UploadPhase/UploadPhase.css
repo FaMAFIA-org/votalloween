@@ -1,0 +1,305 @@
+/* Upload Phase Container */
+.upload-phase {
+  width: 100%;
+  min-height: 100%;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+}
+
+/* Welcome Screen */
+.welcome-screen {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.welcome-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-content > p {
+  color: var(--secondary-color);
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.welcome-steps {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  margin: 2rem 0 3rem;
+  flex-wrap: wrap;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 80px;
+}
+
+.step-icon {
+  font-size: 2.5rem;
+}
+
+.step span:last-child {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.btn-large {
+  font-size: 1.2rem !important;
+  padding: 1.2rem !important;
+}
+
+/* Photo Capture */
+.photo-capture {
+  padding: 1rem;
+}
+
+.photo-capture-content h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.camera-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.camera-placeholder {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 107, 53, 0.5);
+  border-radius: var(--border-radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.camera-placeholder p {
+  opacity: 0.8;
+  max-width: 250px;
+}
+
+.file-input {
+  display: none;
+}
+
+/* Preview */
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.preview-container {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  max-height: 60vh;
+}
+
+.preview-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.preview-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Costume Form */
+.costume-form {
+  padding: 1rem;
+}
+
+.costume-form-content h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-preview {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  max-height: 200px;
+  margin-bottom: 1.5rem;
+}
+
+.form-preview-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.required {
+  color: var(--error);
+}
+
+.optional {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.spinner-small {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+/* My Costumes */
+.my-costumes {
+  padding: 1rem;
+}
+
+.my-costumes-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.my-costumes-header h2 {
+  margin-bottom: 0.5rem;
+}
+
+.my-costumes-header .subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.costumes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Costume Card */
+.costume-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.costume-card:active {
+  transform: scale(0.98);
+}
+
+.costume-card-image {
+  width: 100%;
+  height: 250px;
+  background: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.costume-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.costume-card-info {
+  padding: 1rem;
+}
+
+.costume-card-info h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.costume-name {
+  color: var(--secondary-color);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.costume-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.my-costumes-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .welcome-screen {
+    padding: 3rem 2rem;
+  }
+
+  .photo-capture,
+  .costume-form,
+  .my-costumes {
+    padding: 2rem;
+  }
+
+  .costume-card-image {
+    height: 300px;
+  }
+}
