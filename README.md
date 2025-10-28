@@ -108,37 +108,36 @@ curl -X PUT http://localhost:3000/api/config \
   }'
 ```
 
-## Deployment en Railway con Auto-Deploy
+## Deployment con Auto-Deploy
 
-Este proyecto está configurado para **auto-deploy automático** desde GitHub a Railway.
+Este proyecto usa una arquitectura híbrida:
+- **Backend en Railway** (Express + PostgreSQL)
+- **Frontend en GitHub Pages** (React)
 
 ### 🚀 Guía Completa de Deployment
 
-Ver **[RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)** para instrucciones detalladas paso a paso.
+Ver **[GITHUB_PAGES_DEPLOYMENT.md](./GITHUB_PAGES_DEPLOYMENT.md)** para instrucciones detalladas paso a paso.
 
 ### Resumen Rápido
 
-1. **Conectar repositorio a Railway**
-   - Railway detectará cambios automáticamente en GitHub
-   - Cada push desplegará automáticamente
+#### Backend en Railway
 
-2. **Crear 3 servicios en Railway:**
+1. **Conectar repositorio a Railway**
+2. **Crear 2 servicios:**
    - PostgreSQL Database
    - Backend Service (root directory: `backend/`)
-   - Frontend Service (root directory: `frontend/`)
+3. **Generar dominio público** para el backend
 
-3. **Configurar variables de entorno:**
-   - Backend: `DATABASE_URL` (automática)
-   - Frontend: `VITE_API_URL` (URL del backend)
+#### Frontend en GitHub Pages
 
-4. **¡Listo!** Railway desplegará automáticamente con cada push a `main`
+1. **Habilitar GitHub Pages** (Settings → Pages → Source: GitHub Actions)
+2. **Configurar variable** `VITE_API_URL` con la URL del backend
+3. **Push a main** → Auto-deploy automático
 
-### Auto-Deploy
+### Auto-Deploy Configurado
 
-Cada vez que hagas `git push origin main`, Railway:
-1. Detecta los cambios automáticamente
-2. Re-construye los servicios afectados
-3. Despliega las nuevas versiones
+- ✅ Backend: Cada push que modifique `backend/` → Railway auto-deploy
+- ✅ Frontend: Cada push que modifique `frontend/` → GitHub Pages auto-deploy
 
 ```bash
 # Hacer cambios y commitear
@@ -146,8 +145,13 @@ git add .
 git commit -m "Update feature"
 git push origin main
 
-# Railway desplegará automáticamente
+# Se desplegarán automáticamente los servicios afectados
 ```
+
+### URLs de Producción
+
+- **Frontend**: `https://famafia-org.github.io/votalloween/`
+- **Backend API**: `https://tu-backend.railway.app`
 
 ## API Endpoints
 

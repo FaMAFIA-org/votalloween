@@ -31,6 +31,8 @@ Esta guía te llevará paso a paso para desplegar VotAlloween en Railway con aut
 2. Selecciona **"GitHub Repo"** → **"FaMAFIA-org/votalloween"**
 3. Railway detectará el repositorio y creará un servicio
 
+⚠️ **IMPORTANTE**: Si ves un error de "Failed to create build plan" o "Nixpacks error", es normal. Necesitas configurar el Root Directory primero (siguiente paso).
+
 ### 3.2 Configurar Root Directory
 
 1. Ve al servicio que acabas de crear
@@ -215,24 +217,80 @@ curl -X PUT https://tu-backend.railway.app/api/config \
 
 ## Troubleshooting
 
-### Error: "Cannot find module '@prisma/client'"
-**Solución**: Verifica que el build command incluye `prisma generate`
+### ❌ Error: "Failed to create build plan" o "Nixpacks error"
 
-```bash
-npm install && npm run build
-```
+**Causa**: Railway no puede detectar automáticamente qué construir en un monorepo.
 
-### Error: Frontend no puede conectar con Backend
-**Solución**: Verifica que `VITE_API_URL` está configurada correctamente en las variables del frontend
-
-### Error: Database connection failed
 **Solución**:
-1. Verifica que el servicio PostgreSQL está corriendo
-2. Verifica que `DATABASE_URL` está conectada en las variables del backend
-3. Railway conecta automáticamente los servicios
+1. **CRÍTICO**: Configura el **Root Directory** inmediatamente después de crear el servicio
+   - Para backend: `backend/`
+   - Para frontend: `frontend/`
+2. Si el error persiste, haz click en **"Redeploy"** después de configurar el Root Directory
+3. Los archivos `nixpacks.toml` en cada carpeta ayudarán a Railway a detectar la configuración correcta
 
-### Build falla en el frontend
-**Solución**: Asegúrate que el Root Directory está configurado a `frontend`
+**Pasos específicos:**
+1. Ve a Settings del servicio
+2. En "Root Directory" escribe: `backend/` o `frontend/`
+3. Guarda los cambios
+4. Ve a Deployments
+5. Click "Redeploy" en el deployment fallido
+
+### ❌ Error: "Cannot find module '@prisma/client'"
+
+**Causa**: Prisma no se generó durante el build.
+
+**Solución**:
+1. Verifica que el Root Directory es `backend/`
+2. El `package.json` del backend ya tiene el script `build` correcto
+3. Railway ejecutará automáticamente: `npm install && npm run build`
+
+### ❌ Error: Frontend no puede conectar con Backend (CORS error)
+
+**Causa**: `VITE_API_URL` no está configurada o el backend no tiene la URL correcta.
+
+**Solución**:
+1. En el servicio **Backend**, genera un domain público (Settings → Networking)
+2. Copia la URL del backend (ej: `https://votalloween-backend-production.up.railway.app`)
+3. En el servicio **Frontend**, agrega variable de entorno:
+   - Name: `VITE_API_URL`
+   - Value: URL del backend (sin `/` al final)
+4. Redeploy el frontend
+
+### ❌ Error: Database connection failed
+
+**Causa**: Backend no puede conectarse a PostgreSQL.
+
+**Solución**:
+1. Verifica que el servicio PostgreSQL está corriendo (debe tener un círculo verde)
+2. Ve a Variables en el backend
+3. Debe existir `DATABASE_URL` (Railway la conecta automáticamente)
+4. Si no existe:
+   - Click "New Variable"
+   - Click "Add Reference"
+   - Selecciona PostgreSQL → DATABASE_URL
+
+### ❌ Error: Build falla en el frontend
+
+**Causa**: Root Directory incorrecto o dependencias no instaladas.
+
+**Solución**:
+1. Verifica Root Directory = `frontend/`
+2. Verifica que `package.json` existe en `frontend/`
+3. Chequea los logs de build para errores específicos
+
+### ❌ Error: "Port already in use" o app no responde
+
+**Causa**: Railway necesita que uses la variable `$PORT`.
+
+**Solución**:
+- **Backend**: Ya configurado correctamente (usa `process.env.PORT`)
+- **Frontend**: El script `preview` ya está configurado para usar el puerto correcto
+
+### ⚠️ Warning: "LF will be replaced by CRLF"
+
+**Causa**: Git en Windows convierte line endings.
+
+**Solución**: Es solo un warning, no afecta el deployment. Puedes ignorarlo.
 
 ## Variables de Entorno - Resumen
 
