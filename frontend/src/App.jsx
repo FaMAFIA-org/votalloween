@@ -3,6 +3,7 @@ import { getConfig } from './services/api';
 import { getDeviceId } from './services/deviceId';
 import UploadPhase from './components/UploadPhase/UploadPhase';
 import VotingPhase from './components/VotingPhase/VotingPhase';
+import AdminPanel from './components/AdminPanel/AdminPanel';
 import SkeletonWalker from './components/SkeletonWalker';
 import './App.css';
 
@@ -11,6 +12,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deviceId] = useState(() => getDeviceId());
+  const [currentRoute, setCurrentRoute] = useState(window.location.hash);
 
   // Obtener configuración al cargar
   useEffect(() => {
@@ -18,6 +20,15 @@ function App() {
     // Recargar cada 30 segundos para detectar cambios de fase
     const interval = setInterval(loadConfig, 30000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Handle route changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentRoute(window.location.hash);
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   async function loadConfig() {
@@ -56,6 +67,11 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  // Show admin panel if hash is #admin
+  if (currentRoute === '#admin') {
+    return <AdminPanel />;
   }
 
   // Determinar qué mostrar según la fase

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getAllCostumes, checkIfVoted, submitVote } from '../../services/api';
+import { getAllCostumes, checkIfVoted, submitVotes } from '../../services/api';
 import VotingScreen from './VotingScreen';
 import ThankYouScreen from './ThankYouScreen';
 import './VotingPhase.css';
@@ -8,14 +8,15 @@ export default function VotingPhase({ deviceId, votingEndTime }) {
   const [costumes, setCostumes] = useState([]);
   const [hasVoted, setHasVoted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [votedCostume, setVotedCostume] = useState(null);
+  const [votedCostumes, setVotedCostumes] = useState(null);
 
   const checkVoteStatus = useCallback(async () => {
     try {
       const result = await checkIfVoted(deviceId);
       setHasVoted(result.hasVoted);
-      if (result.hasVoted && result.vote) {
-        setVotedCostume(result.vote.costume);
+      if (result.hasVoted && result.votes) {
+        // Store votes by category
+        setVotedCostumes(result.votes);
       }
     } catch (error) {
       console.error('Error checking vote status:', error);
@@ -41,18 +42,23 @@ export default function VotingPhase({ deviceId, votingEndTime }) {
     loadCostumes();
   }, [checkVoteStatus, loadCostumes]);
 
-  async function handleVote(costumeId) {
+  async function handleVote(votes) {
     try {
       setLoading(true);
-      const result = await submitVote(deviceId, costumeId);
+      const result = await submitVotes(deviceId, votes);
 
       setHasVoted(true);
-      setVotedCostume(result.costume);
+      // Store the votes with costume info
+      const votesWithCostumes = {};
+      result.votes.forEach(vote => {
+        votesWithCostumes[vote.category] = vote;
+      });
+      setVotedCostumes(votesWithCostumes);
 
-      alert('¡Voto registrado correctamente!');
+      alert('¡Votos registrados correctamente en todas las categorías!');
     } catch (error) {
-      console.error('Error submitting vote:', error);
-      alert('Error al registrar el voto. Intenta de nuevo.');
+      console.error('Error submitting votes:', error);
+      alert(error.message || 'Error al registrar los votos. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -80,7 +86,7 @@ export default function VotingPhase({ deviceId, votingEndTime }) {
       ) : (
         <ThankYouScreen
           votingEndTime={votingEndTime}
-          votedCostume={votedCostume}
+          votedCostumes={votedCostumes}
         />
       )}
     </div>

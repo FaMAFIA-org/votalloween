@@ -122,6 +122,117 @@
   margin: 0;
 }
 
+/* Category Selector */
+.category-selector {
+  margin-bottom: 1.5rem;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.category-tab {
+  position: relative;
+  padding: 1rem;
+  min-width: 60px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 107, 53, 0.2);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+}
+
+.category-tab:hover {
+  border-color: rgba(255, 107, 53, 0.5);
+  transform: translateY(-2px);
+}
+
+.category-tab.active {
+  border-color: var(--primary-color);
+  background: rgba(255, 107, 53, 0.2);
+  box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+}
+
+.category-tab.completed {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.category-tab.completed.active {
+  background: rgba(255, 107, 53, 0.2);
+  border-color: var(--primary-color);
+}
+
+.category-emoji {
+  display: block;
+}
+
+.check-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #10b981;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Current Category */
+.current-category {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+}
+
+.current-category h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.category-instruction {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Vote Navigation */
+.vote-navigation {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(26, 26, 26, 0.98) 70%, transparent);
+  padding: 1.5rem 1rem;
+  margin: 0 -1rem -1rem;
+  backdrop-filter: blur(10px);
+}
+
+.vote-navigation button {
+  flex: 1;
+  max-width: 200px;
+}
+
+.vote-navigation button.btn-large {
+  max-width: none;
+  flex: 1;
+}
+
 /* Vote Action */
 .vote-action-container {
   position: sticky;
@@ -172,10 +283,65 @@
   border: 1px solid rgba(255, 107, 53, 0.3);
 }
 
+.voted-costumes-container {
+  margin: 2rem 0;
+}
+
 .voted-text {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.voted-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.voted-category-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  transition: all 0.3s ease;
+}
+
+.voted-category-card:hover {
+  border-color: rgba(255, 107, 53, 0.5);
+  transform: translateX(5px);
+}
+
+.category-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.category-label .category-emoji {
+  font-size: 1.2rem;
+}
+
+.category-label .category-name {
+  font-weight: 500;
+}
+
+.voted-costume-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-left: 1.7rem;
+}
+
+.costume-subtitle {
+  color: var(--secondary-color);
+  font-weight: 400;
+  font-size: 0.95rem;
 }
 
 .voted-costume-info h2 {

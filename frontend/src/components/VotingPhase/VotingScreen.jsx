@@ -1,13 +1,50 @@
 import { useState } from 'react';
 
-export default function VotingScreen({ costumes, onVote, loading }) {
-  const [selectedCostume, setSelectedCostume] = useState(null);
+const CATEGORIES = [
+  { id: 'best', label: '🎃 Mejor disfraz', emoji: '🎃' },
+  { id: 'funniest', label: '😄 Disfraz más gracioso', emoji: '😄' },
+  { id: 'most_elaborate', label: '🧵 Disfraz más elaborado', emoji: '🧵' },
+  { id: 'best_group', label: '👨‍👩‍👧‍👦 Mejor disfraz grupal', emoji: '👨‍👩‍👧‍👦' },
+];
 
-  function handleVoteClick() {
-    if (selectedCostume) {
-      if (window.confirm('¿Confirmas tu voto por este disfraz?')) {
-        onVote(selectedCostume);
-      }
+export default function VotingScreen({ costumes, onVote, loading }) {
+  const [selectedVotes, setSelectedVotes] = useState({
+    best: null,
+    funniest: null,
+    most_elaborate: null,
+    best_group: null,
+  });
+  const [currentCategory, setCurrentCategory] = useState(0);
+
+  function handleCostumeSelect(costumeId) {
+    const categoryId = CATEGORIES[currentCategory].id;
+    setSelectedVotes(prev => ({
+      ...prev,
+      [categoryId]: costumeId,
+    }));
+  }
+
+  function handleNextCategory() {
+    if (currentCategory < CATEGORIES.length - 1) {
+      setCurrentCategory(currentCategory + 1);
+    }
+  }
+
+  function handlePrevCategory() {
+    if (currentCategory > 0) {
+      setCurrentCategory(currentCategory - 1);
+    }
+  }
+
+  function handleSubmitVotes() {
+    const allSelected = Object.values(selectedVotes).every(vote => vote !== null);
+    if (!allSelected) {
+      alert('Por favor selecciona un disfraz para todas las categorías');
+      return;
+    }
+
+    if (window.confirm('¿Confirmas tus votos en todas las categorías?')) {
+      onVote(selectedVotes);
     }
   }
 
@@ -24,11 +61,36 @@ export default function VotingScreen({ costumes, onVote, loading }) {
     );
   }
 
+  const category = CATEGORIES[currentCategory];
+  const selectedCostumeId = selectedVotes[category.id];
+  const allSelected = Object.values(selectedVotes).every(vote => vote !== null);
+  const progress = Object.values(selectedVotes).filter(v => v !== null).length;
+
   return (
     <div className="voting-screen">
       <div className="voting-header">
-        <h2>🗳️ ¡Vota por tu Favorito!</h2>
-        <p className="subtitle">Selecciona el disfraz que más te guste</p>
+        <h2>🗳️ ¡Vota en todas las categorías!</h2>
+        <p className="subtitle">Progreso: {progress} / {CATEGORIES.length} categorías</p>
+      </div>
+
+      <div className="category-selector">
+        <div className="category-tabs">
+          {CATEGORIES.map((cat, idx) => (
+            <button
+              key={cat.id}
+              className={`category-tab ${currentCategory === idx ? 'active' : ''} ${selectedVotes[cat.id] ? 'completed' : ''}`}
+              onClick={() => setCurrentCategory(idx)}
+            >
+              <span className="category-emoji">{cat.emoji}</span>
+              {selectedVotes[cat.id] && <span className="check-badge">✓</span>}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="current-category">
+        <h3>{category.label}</h3>
+        <p className="category-instruction">Selecciona el mejor disfraz para esta categoría</p>
       </div>
 
       <div className="costumes-grid">
@@ -36,29 +98,45 @@ export default function VotingScreen({ costumes, onVote, loading }) {
           <CostumeVoteCard
             key={costume.id}
             costume={costume}
-            selected={selectedCostume === costume.id}
-            onSelect={() => setSelectedCostume(costume.id)}
+            selected={selectedCostumeId === costume.id}
+            onSelect={() => handleCostumeSelect(costume.id)}
           />
         ))}
       </div>
 
-      {selectedCostume && (
-        <div className="vote-action-container">
+      <div className="vote-navigation">
+        <button
+          onClick={handlePrevCategory}
+          className="btn-secondary"
+          disabled={currentCategory === 0}
+        >
+          ← Anterior
+        </button>
+
+        {currentCategory < CATEGORIES.length - 1 ? (
           <button
-            onClick={handleVoteClick}
+            onClick={handleNextCategory}
+            className="btn-primary"
+            disabled={!selectedCostumeId}
+          >
+            Siguiente →
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmitVotes}
             className="btn-primary btn-large"
-            disabled={loading}
+            disabled={loading || !allSelected}
           >
             {loading ? (
               <>
                 <span className="spinner-small"></span> Votando...
               </>
             ) : (
-              'Confirmar Voto'
+              '✅ Confirmar Todos los Votos'
             )}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

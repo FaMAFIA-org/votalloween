@@ -160,14 +160,14 @@ export async function checkIfVoted(deviceId) {
 }
 
 /**
- * Registra un voto
+ * Registra votos en todas las categorías
  * @param {string} deviceId - ID del dispositivo
- * @param {string} costumeId - ID del disfraz votado
+ * @param {Object} votes - Votos por categoría: { best, funniest, most_elaborate, best_group }
  */
-export async function submitVote(deviceId, costumeId) {
+export async function submitVotes(deviceId, votes) {
   return request('/api/votes', {
     method: 'POST',
-    body: JSON.stringify({ deviceId, costumeId }),
+    body: JSON.stringify({ deviceId, votes }),
   });
 }
 

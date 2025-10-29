@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 
-export default function ThankYouScreen({ votingEndTime, votedCostume }) {
+const CATEGORIES = [
+  { id: 'best', label: '🎃 Mejor disfraz', emoji: '🎃' },
+  { id: 'funniest', label: '😄 Disfraz más gracioso', emoji: '😄' },
+  { id: 'most_elaborate', label: '🧵 Disfraz más elaborado', emoji: '🧵' },
+  { id: 'best_group', label: '👨‍👩‍👧‍👦 Mejor disfraz grupal', emoji: '👨‍👩‍👧‍👦' },
+];
+
+export default function ThankYouScreen({ votingEndTime, votedCostumes }) {
   const [timeLeft, setTimeLeft] = useState('');
   const [contestEnded, setContestEnded] = useState(false);
 
@@ -67,13 +74,32 @@ export default function ThankYouScreen({ votingEndTime, votedCostume }) {
       <div className="thank-you-content">
         <h1 className="halloween-title">¡Gracias por Votar! 🎉</h1>
 
-        {votedCostume && (
-          <div className="voted-costume-info">
-            <p className="voted-text">Votaste por:</p>
-            <h2>{votedCostume.participantName}</h2>
-            {votedCostume.costumeName && (
-              <p className="costume-name">{votedCostume.costumeName}</p>
-            )}
+        {votedCostumes && (
+          <div className="voted-costumes-container">
+            <p className="voted-text">Tus votos:</p>
+            <div className="voted-categories">
+              {CATEGORIES.map(category => {
+                const vote = votedCostumes[category.id];
+                if (!vote || !vote.costume) return null;
+
+                return (
+                  <div key={category.id} className="voted-category-card">
+                    <div className="category-label">
+                      <span className="category-emoji">{category.emoji}</span>
+                      <span className="category-name">{category.label}</span>
+                    </div>
+                    <div className="voted-costume-name">
+                      {vote.costume.participantName}
+                      {vote.costume.costumeName && (
+                        <span className="costume-subtitle">
+                          {' - '}{vote.costume.costumeName}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
