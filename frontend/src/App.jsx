@@ -82,10 +82,6 @@ function App() {
           />
         )}
       </main>
-
-      <footer className="app-footer">
-        <small>ID: {deviceId.slice(-8)}</small>
-      </footer>
     </div>
   );
 }
