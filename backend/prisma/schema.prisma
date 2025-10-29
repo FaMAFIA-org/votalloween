@@ -25,20 +25,22 @@ model Costume {
   costumeName     String?
   imageUrl        String
   deviceId        String
-  votes           Int      @default(0)
   uploadedAt      DateTime @default(now())
-  Vote            Vote[]
+  votes           Vote[]
 
   @@index([deviceId])
 }
 
 model Vote {
   id        String   @id @default(uuid())
-  deviceId  String   @unique
+  deviceId  String
   costumeId String
+  category  String   // "best", "funniest", "most_elaborate", "best_group"
   costume   Costume  @relation(fields: [costumeId], references: [id])
   votedAt   DateTime @default(now())
 
+  @@unique([deviceId, category])
   @@index([deviceId])
   @@index([costumeId])
+  @@index([category])
 }
