@@ -1,4 +1,4 @@
-export default function MyCostumes({ costumes, onAddNew, onReload }) {
+export default function MyCostumes({ costumes, onAddNew, onEdit, onDelete }) {
   return (
     <div className="my-costumes">
       <div className="my-costumes-header">
@@ -8,7 +8,7 @@ export default function MyCostumes({ costumes, onAddNew, onReload }) {
 
       <div className="costumes-list">
         {costumes.map((costume) => (
-          <CostumeCard key={costume.id} costume={costume} />
+          <CostumeCard key={costume.id} costume={costume} onEdit={onEdit} onDelete={onDelete} />
         ))}
       </div>
 
@@ -16,18 +16,21 @@ export default function MyCostumes({ costumes, onAddNew, onReload }) {
         <button onClick={onAddNew} className="btn-primary btn-large">
           Subir Otro Disfraz
         </button>
-        <button onClick={onReload} className="btn-secondary mt-1">
-          Actualizar Lista
-        </button>
       </div>
     </div>
   );
 }
 
-function CostumeCard({ costume }) {
+function CostumeCard({ costume, onEdit, onDelete }) {
   const imageUrl = costume.imageUrl.startsWith('http')
     ? costume.imageUrl
     : `${import.meta.env.VITE_API_URL}${costume.imageUrl}`;
+
+  function handleDelete() {
+    if (window.confirm(`¿Seguro que quieres eliminar el disfraz de ${costume.participantName}?`)) {
+      onDelete(costume);
+    }
+  }
 
   return (
     <div className="costume-card">
@@ -48,6 +51,20 @@ function CostumeCard({ costume }) {
               minute: '2-digit'
             })}
           </span>
+        </div>
+        <div className="costume-card-actions">
+          <button
+            onClick={() => onEdit(costume)}
+            className="btn-secondary"
+          >
+            Editar
+          </button>
+          <button
+            onClick={handleDelete}
+            className="btn-danger"
+          >
+            Eliminar
+          </button>
         </div>
       </div>
     </div>

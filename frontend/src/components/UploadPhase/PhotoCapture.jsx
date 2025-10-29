@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 
 export default function PhotoCapture({ onCapture, onCancel }) {
   const [preview, setPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
   function handleFileChange(e) {
@@ -20,6 +21,9 @@ export default function PhotoCapture({ onCapture, onCancel }) {
         return;
       }
 
+      // Guardar el archivo
+      setSelectedFile(file);
+
       // Crear preview
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -30,14 +34,14 @@ export default function PhotoCapture({ onCapture, onCancel }) {
   }
 
   function handleConfirm() {
-    const file = fileInputRef.current.files[0];
-    if (file) {
-      onCapture(file);
+    if (selectedFile) {
+      onCapture(selectedFile);
     }
   }
 
   function handleRetake() {
     setPreview(null);
+    setSelectedFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }

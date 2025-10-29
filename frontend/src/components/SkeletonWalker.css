@@ -1,0 +1,35 @@
+/* Skeleton Walker - Halloween Easter Egg */
+.skeleton-walker {
+  position: fixed;
+  left: -150px;
+  z-index: 9999;
+  pointer-events: none; /* No clickeable */
+  animation: walkAcross 0.4s linear;
+}
+
+.skeleton-image {
+  width: 920px;
+  height: auto;
+  display: block;
+  opacity: 0.9;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Animación de cruzar la pantalla */
+@keyframes walkAcross {
+  0% {
+    left: -150px;
+    transform: scaleX(1);
+  }
+  100% {
+    left: calc(100% + 150px);
+    transform: scaleX(1);
+  }
+}
+
+/* Hacer la imagen más pequeña en móviles */
+@media (max-width: 768px) {
+  .skeleton-image {
+    width: 280px;
+  }
+}

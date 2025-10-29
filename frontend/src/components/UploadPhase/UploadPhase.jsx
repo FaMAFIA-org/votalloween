@@ -1,23 +1,22 @@
-import { useState, useEffect } from 'react';
-import { getCostumesByDevice, uploadCostume } from '../../services/api';
-import { getMyUploads, addUpload } from '../../services/localStorage';
+import { useState, useEffect, useCallback } from 'react';
+import { getCostumesByDevice, uploadCostume, updateCostume, deleteCostume } from '../../services/api';
+import { addUpload } from '../../services/localStorage';
 import PhotoCapture from './PhotoCapture';
 import CostumeForm from './CostumeForm';
+import EditCostume from './EditCostume';
 import MyCostumes from './MyCostumes';
 import './UploadPhase.css';
 
 export default function UploadPhase({ deviceId }) {
-  const [view, setView] = useState('welcome'); // 'welcome', 'capture', 'form', 'list'
+  const [view, setView] = useState('welcome'); // 'welcome', 'capture', 'form', 'list', 'edit'
   const [capturedImage, setCapturedImage] = useState(null);
   const [myUploads, setMyUploads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [gifKey, setGifKey] = useState(0);
+  const [editingCostume, setEditingCostume] = useState(null);
 
   // Cargar disfraces del dispositivo al montar
-  useEffect(() => {
-    loadMyCostumes();
-  }, [deviceId]);
-
-  async function loadMyCostumes() {
+  const loadMyCostumes = useCallback(async () => {
     try {
       setLoading(true);
       const costumes = await getCostumesByDevice(deviceId);
@@ -32,7 +31,21 @@ export default function UploadPhase({ deviceId }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [deviceId]);
+
+  useEffect(() => {
+    loadMyCostumes();
+  }, [loadMyCostumes]);
+
+  // Force GIF to reload every 3 seconds to loop the animation
+  useEffect(() => {
+    if (view === 'welcome') {
+      const interval = setInterval(() => {
+        setGifKey(prev => prev + 1);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [view]);
 
   function handleStartUpload() {
     setView('capture');
@@ -46,6 +59,61 @@ export default function UploadPhase({ deviceId }) {
   function handleCancelForm() {
     setCapturedImage(null);
     setView(myUploads.length > 0 ? 'list' : 'welcome');
+  }
+
+  function handleEdit(costume) {
+    setEditingCostume(costume);
+    setView('edit');
+  }
+
+  function handleCancelEdit() {
+    setEditingCostume(null);
+    setView('list');
+  }
+
+  async function handleUpdateCostume(participantName, costumeName, newImage) {
+    try {
+      setLoading(true);
+      const data = {
+        participantName,
+        costumeName,
+      };
+
+      await updateCostume(editingCostume.id, data, newImage);
+
+      // Recargar lista
+      await loadMyCostumes();
+
+      // Limpiar estado
+      setEditingCostume(null);
+      setView('list');
+    } catch (error) {
+      console.error('Error updating costume:', error);
+      alert('Error al actualizar el disfraz. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(costume) {
+    try {
+      setLoading(true);
+      await deleteCostume(costume.id);
+
+      // Recargar lista
+      await loadMyCostumes();
+
+      // Si ya no hay disfraces, volver al welcome
+      const updatedCostumes = myUploads.filter(c => c.id !== costume.id);
+      if (updatedCostumes.length === 0) {
+        setView('welcome');
+      }
+    } catch (error) {
+      console.error('Error deleting costume:', error);
+      alert('Error al eliminar el disfraz. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSubmitCostume(participantName, costumeName) {
@@ -92,24 +160,36 @@ export default function UploadPhase({ deviceId }) {
       {view === 'welcome' && (
         <div className="welcome-screen">
           <div className="welcome-content">
-            <h2>¡Bienvenido al Concurso!</h2>
-            <p>Muestra tu mejor disfraz de Halloween</p>
+            <h2>¡Bienvenido al concurso!</h2>
             <div className="welcome-steps">
               <div className="step">
-                <span className="step-icon">📸</span>
-                <span>Toma una foto</span>
+                <img
+                  src={`${import.meta.env.BASE_URL}take_a_photo.png`}
+                  alt="1. Tomar foto"
+                  className="step-icon"
+                />
+                <span>1. Sacate una fotito</span>
               </div>
               <div className="step">
-                <span className="step-icon">✍️</span>
-                <span>Registra tu nombre</span>
+                <img
+                  src={`${import.meta.env.BASE_URL}skeleton-hand-writing-1870283.webp`}
+                  alt="2. Escribir"
+                  className="step-icon"
+                />
+                <span>2. Pone tu nombre</span>
               </div>
               <div className="step">
-                <span className="step-icon">🎉</span>
-                <span>¡Participa!</span>
+                <img
+                  key={gifKey}
+                  src={`${import.meta.env.BASE_URL}dancing_skeleton.gif?t=${gifKey}`}
+                  alt="3. Celebrar"
+                  className="step-icon"
+                />
+                <span>3. ¡Suerte!</span>
               </div>
             </div>
             <button onClick={handleStartUpload} className="btn-primary btn-large">
-              Entrar al Concurso
+             💀☠️💀🎃 participar ☠️💀☠️🎃
             </button>
           </div>
         </div>
@@ -138,7 +218,18 @@ export default function UploadPhase({ deviceId }) {
         <MyCostumes
           costumes={myUploads}
           onAddNew={handleStartUpload}
-          onReload={loadMyCostumes}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
+
+      {/* Vista de Edición */}
+      {view === 'edit' && editingCostume && (
+        <EditCostume
+          costume={editingCostume}
+          onSubmit={handleUpdateCostume}
+          onCancel={handleCancelEdit}
+          loading={loading}
         />
       )}
     </div>

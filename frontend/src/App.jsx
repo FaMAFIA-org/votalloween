@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getConfig } from './services/api';
 import { getDeviceId } from './services/deviceId';
 import UploadPhase from './components/UploadPhase/UploadPhase';
+import SkeletonWalker from './components/SkeletonWalker';
 import './App.css';
 
 function App() {
@@ -61,9 +62,11 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Esqueleto caminante de Halloween */}
+      <SkeletonWalker />
+
       <header className="app-header">
-        <img src="/logo.png" alt="VotAlloween" className="app-logo" />
-        <p className="subtitle">Concurso de Disfraces</p>
+        <img src={`${import.meta.env.BASE_URL}logo.png`} alt="VotAlloween" className="app-logo" />
       </header>
 
       <main className="app-main">
