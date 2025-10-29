@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
+import { compressImage } from '../../utils/imageCompression';
 
 export default function PhotoCapture({ onCapture, onCancel }) {
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [compressing, setCompressing] = useState(false);
   const fileInputRef = useRef(null);
 
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files[0];
 
     if (file) {
@@ -21,15 +23,27 @@ export default function PhotoCapture({ onCapture, onCancel }) {
         return;
       }
 
-      // Guardar el archivo
-      setSelectedFile(file);
+      try {
+        setCompressing(true);
 
-      // Crear preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
+        // Comprimir imagen
+        const compressedFile = await compressImage(file, 1200, 1200, 0.8);
+
+        // Guardar el archivo comprimido
+        setSelectedFile(compressedFile);
+
+        // Crear preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setPreview(e.target.result);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        alert('Error al procesar la imagen. Intenta de nuevo.');
+      } finally {
+        setCompressing(false);
+      }
     }
   }
 
@@ -52,7 +66,14 @@ export default function PhotoCapture({ onCapture, onCancel }) {
       <div className="photo-capture-content">
         <h2>Captura tu Disfraz</h2>
 
-        {!preview ? (
+        {compressing ? (
+          <div className="camera-section">
+            <div className="camera-placeholder">
+              <div className="spinner"></div>
+              <p>Procesando imagen...</p>
+            </div>
+          </div>
+        ) : !preview ? (
           <div className="camera-section">
             <div className="camera-placeholder">
               <span className="camera-icon">📷</span>

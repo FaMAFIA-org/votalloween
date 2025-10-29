@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getConfig } from './services/api';
 import { getDeviceId } from './services/deviceId';
 import UploadPhase from './components/UploadPhase/UploadPhase';
+import VotingPhase from './components/VotingPhase/VotingPhase';
 import SkeletonWalker from './components/SkeletonWalker';
 import './App.css';
 
@@ -85,18 +86,6 @@ function App() {
       <footer className="app-footer">
         <small>ID: {deviceId.slice(-8)}</small>
       </footer>
-    </div>
-  );
-}
-
-// Placeholder - Voting Phase (lo crearemos después)
-function VotingPhase({ deviceId, votingEndTime }) {
-  return (
-    <div className="phase-container">
-      <h2>🗳️ Fase de Votación</h2>
-      <p>Componente en construcción...</p>
-      <p>Device ID: {deviceId}</p>
-      <p>Termina: {votingEndTime ? new Date(votingEndTime).toLocaleString('es-ES') : 'No definido'}</p>
     </div>
   );
 }

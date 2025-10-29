@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react';
+import { compressImage } from '../../utils/imageCompression';
 
 export default function EditCostume({ costume, onSubmit, onCancel, loading }) {
   const [participantName, setParticipantName] = useState(costume.participantName);
   const [costumeName, setCostumeName] = useState(costume.costumeName || '');
   const [newImage, setNewImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [compressing, setCompressing] = useState(false);
   const fileInputRef = useRef(null);
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -12,7 +14,7 @@ export default function EditCostume({ costume, onSubmit, onCancel, loading }) {
     ? costume.imageUrl
     : `${API_URL}${costume.imageUrl}`;
 
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files[0];
 
     if (file) {
@@ -28,14 +30,26 @@ export default function EditCostume({ costume, onSubmit, onCancel, loading }) {
         return;
       }
 
-      setNewImage(file);
+      try {
+        setCompressing(true);
 
-      // Crear preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreview(e.target.result);
-      };
-      reader.readAsDataURL(file);
+        // Comprimir imagen
+        const compressedFile = await compressImage(file, 1200, 1200, 0.8);
+
+        setNewImage(compressedFile);
+
+        // Crear preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setPreview(e.target.result);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        alert('Error al procesar la imagen. Intenta de nuevo.');
+      } finally {
+        setCompressing(false);
+      }
     }
   }
 
@@ -73,10 +87,18 @@ export default function EditCostume({ costume, onSubmit, onCancel, loading }) {
               onChange={handleFileChange}
               className="file-input"
               id="edit-photo-input"
-              disabled={loading}
+              disabled={loading || compressing}
             />
             <label htmlFor="edit-photo-input" className="btn-secondary">
-              {newImage ? 'Cambiar Otra Foto' : 'Seleccionar Nueva Foto'}
+              {compressing ? (
+                <>
+                  <span className="spinner-small"></span> Procesando...
+                </>
+              ) : newImage ? (
+                'Cambiar Otra Foto'
+              ) : (
+                'Seleccionar Nueva Foto'
+              )}
             </label>
           </div>
 
