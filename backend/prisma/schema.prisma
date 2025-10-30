@@ -36,7 +36,7 @@ model Vote {
   deviceId  String
   costumeId String
   category  String   // "best", "funniest", "most_elaborate", "best_group"
-  costume   Costume  @relation(fields: [costumeId], references: [id])
+  costume   Costume  @relation(fields: [costumeId], references: [id], onDelete: Cascade)
   votedAt   DateTime @default(now())
 
   @@unique([deviceId, category])
