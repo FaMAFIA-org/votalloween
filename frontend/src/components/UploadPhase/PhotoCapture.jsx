@@ -77,7 +77,7 @@ export default function PhotoCapture({ onCapture, onCancel }) {
           <div className="camera-section">
             <div className="camera-placeholder">
               <span className="camera-icon">📷</span>
-              <p>Toca para tomar una foto o seleccionar de galería</p>
+              <p>Sacate una fotito ;)</p>
             </div>
 
             <input
@@ -91,7 +91,7 @@ export default function PhotoCapture({ onCapture, onCancel }) {
             />
 
             <label htmlFor="photo-input" className="btn-primary btn-large">
-              Tomar Foto
+              Sacar foto
             </label>
 
             <button onClick={onCancel} className="btn-secondary mt-1">
@@ -109,7 +109,7 @@ export default function PhotoCapture({ onCapture, onCancel }) {
                 Usar esta Foto
               </button>
               <button onClick={handleRetake} className="btn-secondary mt-1">
-                Tomar Otra
+                Sacar Otra
               </button>
             </div>
           </div>
