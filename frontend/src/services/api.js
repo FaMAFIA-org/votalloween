@@ -4,10 +4,21 @@
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
+
 /**
- * Helper para hacer peticiones fetch
+ * Helper to wait/sleep for a specified time
  */
-async function request(endpoint, options = {}) {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Helper para hacer peticiones fetch con retry automático
+ */
+async function request(endpoint, options = {}, retryCount = 0) {
   const url = `${API_URL}${endpoint}`;
 
   try {
@@ -26,15 +37,31 @@ async function request(endpoint, options = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error('API Error:', error);
+    console.error(`API Error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, error);
+
+    // Retry on network errors or 5xx server errors
+    const shouldRetry =
+      retryCount < MAX_RETRIES &&
+      (error.message.includes('fetch') ||
+       error.message.includes('network') ||
+       error.message.includes('Failed to fetch') ||
+       error.message.includes('Error 5'));
+
+    if (shouldRetry) {
+      const delay = RETRY_DELAY * Math.pow(2, retryCount); // Exponential backoff
+      console.log(`Retrying in ${delay}ms...`);
+      await sleep(delay);
+      return request(endpoint, options, retryCount + 1);
+    }
+
     throw error;
   }
 }
 
 /**
- * Helper para peticiones con FormData (archivos)
+ * Helper para peticiones con FormData (archivos) con retry automático
  */
-async function requestFormData(endpoint, formData) {
+async function requestFormData(endpoint, formData, retryCount = 0) {
   const url = `${API_URL}${endpoint}`;
 
   try {
@@ -51,7 +78,23 @@ async function requestFormData(endpoint, formData) {
 
     return await response.json();
   } catch (error) {
-    console.error('API Error:', error);
+    console.error(`API Error (attempt ${retryCount + 1}/${MAX_RETRIES + 1}):`, error);
+
+    // Retry on network errors or 5xx server errors
+    const shouldRetry =
+      retryCount < MAX_RETRIES &&
+      (error.message.includes('fetch') ||
+       error.message.includes('network') ||
+       error.message.includes('Failed to fetch') ||
+       error.message.includes('Error 5'));
+
+    if (shouldRetry) {
+      const delay = RETRY_DELAY * Math.pow(2, retryCount); // Exponential backoff
+      console.log(`Retrying in ${delay}ms...`);
+      await sleep(delay);
+      return requestFormData(endpoint, formData, retryCount + 1);
+    }
+
     throw error;
   }
 }
