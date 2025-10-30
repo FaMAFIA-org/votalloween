@@ -37,6 +37,44 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'VotAlloween API is running' });
 });
 
+// Debug endpoint - Storage information
+app.get('/api/debug/storage', (req, res) => {
+  try {
+    const uploadsDir = UPLOADS_DIR;
+    const uploadsExists = fs.existsSync(uploadsDir);
+
+    let files = [];
+    let totalSize = 0;
+
+    if (uploadsExists) {
+      const filesList = fs.readdirSync(uploadsDir);
+      files = filesList.map(filename => {
+        const filepath = `${uploadsDir}/${filename}`;
+        const stats = fs.statSync(filepath);
+        totalSize += stats.size;
+        return {
+          filename,
+          size: stats.size,
+          sizeKB: (stats.size / 1024).toFixed(2),
+          created: stats.birthtime,
+          modified: stats.mtime,
+        };
+      });
+    }
+
+    res.json({
+      uploadsDirectory: uploadsDir,
+      directoryExists: uploadsExists,
+      fileCount: files.length,
+      totalSize: totalSize,
+      totalSizeMB: (totalSize / (1024 * 1024)).toFixed(2),
+      files: files.sort((a, b) => new Date(b.created) - new Date(a.created)),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Initialize config if not exists
 async function initializeConfig() {
   const config = await prisma.config.findFirst();
