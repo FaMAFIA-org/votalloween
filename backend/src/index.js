@@ -34,7 +34,18 @@ app.use('/api/config', configRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', message: 'VotAlloween API is running' });
+  const memUsage = process.memoryUsage();
+  res.json({
+    status: 'ok',
+    message: 'VotAlloween API is running',
+    uptime: process.uptime(),
+    memory: {
+      rss: `${(memUsage.rss / 1024 / 1024).toFixed(2)} MB`,
+      heapUsed: `${(memUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`,
+      heapTotal: `${(memUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`,
+      external: `${(memUsage.external / 1024 / 1024).toFixed(2)} MB`,
+    }
+  });
 });
 
 // Debug endpoint - Storage information
