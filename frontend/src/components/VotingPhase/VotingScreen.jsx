@@ -126,6 +126,7 @@ export default function VotingScreen({ costumes, onVote, loading }) {
           onClick={handlePrevCategory}
           className="btn-secondary"
           disabled={currentCategory === 0}
+          title={currentCategory === 0 ? 'Ya estás en la primera categoría' : 'Volver a la categoría anterior'}
         >
           ← Anterior
         </button>
@@ -135,6 +136,7 @@ export default function VotingScreen({ costumes, onVote, loading }) {
             onClick={handleNextCategory}
             className="btn-primary"
             disabled={!selectedCostumeId}
+            title={!selectedCostumeId ? '¡Selecciona un disfraz primero!' : 'Ir a la siguiente categoría'}
           >
             Siguiente →
           </button>
@@ -143,6 +145,7 @@ export default function VotingScreen({ costumes, onVote, loading }) {
             onClick={handleSubmitVotes}
             className="btn-primary btn-large"
             disabled={loading || !allSelected}
+            title={!allSelected ? `Completa todas las categorías (${progress}/${CATEGORIES.length})` : 'Confirmar votos'}
           >
             {loading ? (
               <>
