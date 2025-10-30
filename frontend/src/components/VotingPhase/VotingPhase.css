@@ -7,11 +7,31 @@
 /* Voting Screen */
 .voting-screen {
   padding: 1rem;
+  padding-top: 0;
+  padding-bottom: 120px; /* Space for sticky navigation */
+}
+
+.scroll-anchor {
+  position: absolute;
+  top: -80px; /* Offset for sticky header height */
+}
+
+/* Sticky Header Section */
+.voting-header-sticky {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(to bottom, rgba(26, 26, 26, 0.98) 85%, transparent);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  padding: 1rem 0 0.5rem 0;
+  margin: 0 -1rem 1rem -1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .voting-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .voting-header h2 {
@@ -124,7 +144,7 @@
 
 /* Category Selector */
 .category-selector {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .category-tabs {
@@ -190,8 +210,8 @@
 /* Current Category */
 .current-category {
   text-align: center;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border-radius: var(--border-radius);
@@ -210,22 +230,27 @@
   margin: 0;
 }
 
-/* Vote Navigation */
+/* Vote Navigation - Always Visible at Bottom */
 .vote-navigation {
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-  position: sticky;
+  position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
   background: linear-gradient(to top, rgba(26, 26, 26, 0.98) 70%, transparent);
   padding: 1.5rem 1rem;
-  margin: 0 -1rem -1rem;
   backdrop-filter: blur(10px);
+  z-index: 90;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .vote-navigation button {
   flex: 1;
   max-width: 200px;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
 }
 
 .vote-navigation button.btn-large {

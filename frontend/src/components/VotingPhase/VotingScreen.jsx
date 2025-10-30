@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const CATEGORIES = [
   { id: 'best', label: '🎃 Mejor disfraz', emoji: '🎃' },
@@ -15,6 +15,14 @@ export default function VotingScreen({ costumes, onVote, loading }) {
     best_group: null,
   });
   const [currentCategory, setCurrentCategory] = useState(0);
+  const topRef = useRef(null);
+
+  // Scroll to top when category changes
+  useEffect(() => {
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [currentCategory]);
 
   function handleCostumeSelect(costumeId) {
     const categoryId = CATEGORIES[currentCategory].id;
@@ -34,6 +42,10 @@ export default function VotingScreen({ costumes, onVote, loading }) {
     if (currentCategory > 0) {
       setCurrentCategory(currentCategory - 1);
     }
+  }
+
+  function handleCategoryTabClick(idx) {
+    setCurrentCategory(idx);
   }
 
   function handleSubmitVotes() {
@@ -68,29 +80,34 @@ export default function VotingScreen({ costumes, onVote, loading }) {
 
   return (
     <div className="voting-screen">
-      <div className="voting-header">
-        <h2>🗳️ ¡Vota en todas las categorías!</h2>
-        <p className="subtitle">Progreso: {progress} / {CATEGORIES.length} categorías</p>
-      </div>
+      {/* Scroll anchor */}
+      <div ref={topRef} className="scroll-anchor"></div>
 
-      <div className="category-selector">
-        <div className="category-tabs">
-          {CATEGORIES.map((cat, idx) => (
-            <button
-              key={cat.id}
-              className={`category-tab ${currentCategory === idx ? 'active' : ''} ${selectedVotes[cat.id] ? 'completed' : ''}`}
-              onClick={() => setCurrentCategory(idx)}
-            >
-              <span className="category-emoji">{cat.emoji}</span>
-              {selectedVotes[cat.id] && <span className="check-badge">✓</span>}
-            </button>
-          ))}
+      <div className="voting-header-sticky">
+        <div className="voting-header">
+          <h2>🗳️ ¡Vota en todas las categorías!</h2>
+          <p className="subtitle">Progreso: {progress} / {CATEGORIES.length} categorías</p>
         </div>
-      </div>
 
-      <div className="current-category">
-        <h3>{category.label}</h3>
-        <p className="category-instruction">Selecciona el mejor disfraz para esta categoría</p>
+        <div className="category-selector">
+          <div className="category-tabs">
+            {CATEGORIES.map((cat, idx) => (
+              <button
+                key={cat.id}
+                className={`category-tab ${currentCategory === idx ? 'active' : ''} ${selectedVotes[cat.id] ? 'completed' : ''}`}
+                onClick={() => handleCategoryTabClick(idx)}
+              >
+                <span className="category-emoji">{cat.emoji}</span>
+                {selectedVotes[cat.id] && <span className="check-badge">✓</span>}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="current-category">
+          <h3>{category.label}</h3>
+          <p className="category-instruction">Selecciona el mejor disfraz para esta categoría</p>
+        </div>
       </div>
 
       <div className="costumes-grid">
@@ -153,7 +170,12 @@ function CostumeVoteCard({ costume, selected, onSelect }) {
       onClick={onSelect}
     >
       <div className="costume-vote-image">
-        <img src={imageUrl} alt={costume.participantName} />
+        <img
+          src={imageUrl}
+          alt={costume.participantName}
+          loading="eager"
+          decoding="async"
+        />
         {selected && (
           <div className="selected-overlay">
             <span className="check-icon">✓</span>
