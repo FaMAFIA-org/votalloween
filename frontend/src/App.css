@@ -36,6 +36,32 @@ body {
   max-width: 100%;
   margin: 0 auto;
   padding: 0;
+  position: relative;
+}
+
+/* Decorative Background Image */
+.app-container::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 20%;
+  height: 20%;
+  background-image: url('/icon-2.jpeg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .app-container::after {
+    width: 30%;
+    height: 30%;
+    opacity: 0.1;
+  }
 }
 
 /* Header */
