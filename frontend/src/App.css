@@ -45,21 +45,21 @@ body {
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 20%;
-  height: 20%;
+  width: 60%;
+  height: 60%;
   background-image: url('/icon-2.jpeg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: bottom right;
-  opacity: 0.15;
+  opacity: 0.1;
   pointer-events: none;
   z-index: 1;
 }
 
 @media (max-width: 768px) {
   .app-container::after {
-    width: 30%;
-    height: 30%;
+    width: 40%;
+    height: 40%;
     opacity: 0.1;
   }
 }

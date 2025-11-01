@@ -5,6 +5,7 @@ import UploadPhase from './components/UploadPhase/UploadPhase';
 import VotingPhase from './components/VotingPhase/VotingPhase';
 import AdminPanel from './components/AdminPanel/AdminPanel';
 import SkeletonWalker from './components/SkeletonWalker';
+import Jumpscare from './components/Jumpscare';
 import './App.css';
 
 function App() {
@@ -81,6 +82,9 @@ function App() {
     <div className="app-container">
       {/* Esqueleto caminante de Halloween */}
       <SkeletonWalker />
+
+      {/* Random Jumpscare */}
+      <Jumpscare />
 
       <header className="app-header">
         <img src={`${import.meta.env.BASE_URL}logo.png`} alt="VotAlloween" className="app-logo" />
