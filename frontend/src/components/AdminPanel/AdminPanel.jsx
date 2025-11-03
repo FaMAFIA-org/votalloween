@@ -224,6 +224,15 @@ export default function AdminPanel() {
             )}
 
             <a
+              href={`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/photos/download-all`}
+              className="btn-secondary"
+              download
+              style={{ textDecoration: 'none', display: 'inline-block' }}
+            >
+              📦 Descargar Todas las Fotos (ZIP)
+            </a>
+
+            <a
               href="/"
               className="btn-secondary"
               style={{ textDecoration: 'none', display: 'inline-block' }}

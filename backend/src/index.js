@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
+import path from 'path';
+import archiver from 'archiver';
 import costumeRoutes from './routes/costumes.js';
 import voteRoutes from './routes/votes.js';
 import configRoutes from './routes/config.js';
@@ -83,6 +85,72 @@ app.get('/api/debug/storage', (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Download all photos as ZIP
+app.get('/api/photos/download-all', async (req, res) => {
+  try {
+    const uploadsDir = UPLOADS_DIR;
+
+    if (!fs.existsSync(uploadsDir)) {
+      return res.status(404).json({ error: 'No se encontró el directorio de fotos' });
+    }
+
+    const files = fs.readdirSync(uploadsDir);
+
+    if (files.length === 0) {
+      return res.status(404).json({ error: 'No hay fotos para descargar' });
+    }
+
+    // Get costume info for better file naming
+    const costumes = await prisma.costume.findMany({
+      select: {
+        imageUrl: true,
+        participantName: true,
+      },
+    });
+
+    // Create a map of filename -> participant name
+    const filenameMap = {};
+    costumes.forEach(costume => {
+      const filename = path.basename(costume.imageUrl);
+      filenameMap[filename] = costume.participantName;
+    });
+
+    // Set response headers
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename=votalloween-fotos-${Date.now()}.zip`);
+
+    // Create ZIP archive
+    const archive = archiver('zip', {
+      zlib: { level: 9 } // Maximum compression
+    });
+
+    // Pipe archive to response
+    archive.pipe(res);
+
+    // Add all files to archive
+    files.forEach(filename => {
+      const filePath = path.join(uploadsDir, filename);
+      const participantName = filenameMap[filename] || 'Unknown';
+      const ext = path.extname(filename);
+
+      // Use participant name in zip filename
+      const zipFilename = `${participantName}-${filename}`;
+
+      archive.file(filePath, { name: zipFilename });
+    });
+
+    // Finalize the archive
+    await archive.finalize();
+
+    console.log(`📦 ZIP download: ${files.length} files`);
+  } catch (error) {
+    console.error('Error creating ZIP:', error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Error al crear el archivo ZIP' });
+    }
   }
 });
 
